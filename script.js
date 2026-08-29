@@ -95,4 +95,39 @@ function game() {
   requestAnimationFrame(game);
 }
 
-game();
+game();let leftButton = document.getElementById("leftButton");
+let rightButton = document.getElementById("rightButton");
+
+
+// 左ボタン
+leftButton.addEventListener("touchstart", function() {
+
+  if (gameOver) {
+    return;
+  }
+
+  playerX = playerX - 20;
+
+  if (playerX < 0) {
+    playerX = 0;
+  }
+
+  player.style.left = playerX + "px";
+});
+
+
+// 右ボタン
+rightButton.addEventListener("touchstart", function() {
+
+  if (gameOver) {
+    return;
+  }
+
+  playerX = playerX + 20;
+
+  if (playerX > 360) {
+    playerX = 360;
+  }
+
+  player.style.left = playerX + "px";
+});

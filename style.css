@@ -29,4 +29,14 @@ body {
 
 #score {
   font-size: 24px;
+}#buttons {
+  margin-top: 15px;
+}
+
+#buttons button {
+  font-size: 40px;
+  width: 100px;
+  height: 70px;
+  margin: 5px;
+  border-radius: 15px;
 }
