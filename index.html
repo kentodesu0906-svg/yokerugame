@@ -1,34 +1,2273 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>よけるゲーム</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>モンスター大ぼうけん</title>
+
+<style>
+
+/* =========================
+   ぜんたい
+========================= */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 10px;
+  background: #9be7ff;
+  font-family: sans-serif;
+  text-align: center;
+  color: #222;
+}
+
+h1 {
+  margin: 10px 0;
+  font-size: 28px;
+}
+
+button {
+  font-size: 18px;
+  padding: 12px 18px;
+  margin: 5px;
+  border: 3px solid #222;
+  border-radius: 15px;
+  background: white;
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(0.9);
+}
+
+
+/* =========================
+   情報
+========================= */
+
+#info {
+  width: 95%;
+  max-width: 500px;
+  margin: 10px auto;
+  padding: 10px;
+  background: white;
+  border: 3px solid #222;
+  border-radius: 15px;
+  font-weight: bold;
+}
+
+#message {
+  min-height: 35px;
+  font-size: 19px;
+  font-weight: bold;
+}
+
+
+/* =========================
+   画面
+========================= */
+
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
+
+
+/* =========================
+   タイトル
+========================= */
+
+#titleScreen {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 25px;
+  background: white;
+  border: 5px solid #222;
+  border-radius: 25px;
+}
+
+#titleScreen h2 {
+  font-size: 35px;
+}
+
+.titleMonster {
+  font-size: 90px;
+}
+
+
+/* =========================
+   マップ
+========================= */
+
+#map {
+  position: relative;
+  width: 360px;
+  height: 360px;
+  max-width: 95vw;
+  margin: 10px auto;
+  overflow: hidden;
+  border: 5px solid #222;
+  border-radius: 20px;
+  background: #65bd63;
+}
+
+
+/* 村 */
+
+#villageArea {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 120px;
+  background: #8ed1ff;
+}
+
+.house {
+  position: absolute;
+  left: 25px;
+  top: 30px;
+  font-size: 50px;
+}
+
+.shop {
+  position: absolute;
+  right: 25px;
+  top: 30px;
+  font-size: 50px;
+}
+
+.villageName {
+  padding-top: 5px;
+  font-weight: bold;
+}
+
+
+/* 森 */
+
+#forestArea {
+  position: absolute;
+  left: 0;
+  top: 120px;
+  width: 100%;
+  height: 180px;
+  background: #62bd5c;
+}
+
+.tree {
+  position: absolute;
+  font-size: 40px;
+}
+
+.tree1 {
+  left: 5px;
+  top: 10px;
+}
+
+.tree2 {
+  right: 5px;
+  top: 10px;
+}
+
+.tree3 {
+  left: 10px;
+  bottom: 5px;
+}
+
+.tree4 {
+  right: 10px;
+  bottom: 5px;
+}
+
+.flower1 {
+  position: absolute;
+  left: 100px;
+  top: 60px;
+  font-size: 25px;
+}
+
+.flower2 {
+  position: absolute;
+  right: 100px;
+  top: 100px;
+  font-size: 25px;
+}
+
+.forestName {
+  margin-top: 70px;
+  font-weight: bold;
+}
+
+
+/* 城 */
+
+#castleArea {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  background: #555;
+}
+
+.castle {
+  font-size: 40px;
+}
+
+.castleName {
+  color: white;
+  font-weight: bold;
+}
+
+
+/* プレイヤー */
+
+#player {
+  position: absolute;
+  left: 155px;
+  top: 160px;
+  font-size: 45px;
+  z-index: 20;
+}
+
+
+/* =========================
+   移動ボタン
+========================= */
+
+#moveButtons {
+  width: 300px;
+  margin: 10px auto;
+}
+
+.moveButton {
+  width: 70px;
+  height: 55px;
+  padding: 5px;
+  margin: 3px;
+  font-size: 25px;
+}
+
+
+/* =========================
+   バトル
+========================= */
+
+#battleScreen {
+  width: 95%;
+  max-width: 500px;
+  margin: 15px auto;
+  padding: 15px;
+  background: white;
+  border: 5px solid #222;
+  border-radius: 25px;
+}
+
+.battleMonster {
+  font-size: 85px;
+}
+
+.battleName {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.hpBox {
+  width: 90%;
+  max-width: 350px;
+  height: 25px;
+  margin: 8px auto;
+  background: #ddd;
+  border: 3px solid #222;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.hpBar {
+  width: 100%;
+  height: 100%;
+  background: #43c95c;
+  transition: width 0.3s;
+}
+
+#enemyHpBar {
+  background: #f04b4b;
+}
+
+
+/* =========================
+   メニュー
+========================= */
+
+.menuBox {
+  width: 95%;
+  max-width: 500px;
+  margin: 15px auto;
+  padding: 15px;
+  background: white;
+  border: 4px solid #222;
+  border-radius: 20px;
+}
+
+
+/* =========================
+   チーム
+========================= */
+
+#teamList {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.teamMonster {
+  font-size: 40px;
+}
+
+
+/* =========================
+   クリア
+========================= */
+
+#clearScreen {
+  width: 95%;
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #ffe66d;
+  border: 5px solid #222;
+  border-radius: 25px;
+}
+
+#clearScreen h2 {
+  font-size: 35px;
+}
+
+
+/* =========================
+   スマホ
+========================= */
+
+@media (max-width: 400px) {
+
+  h1 {
+    font-size: 23px;
+  }
+
+  #map {
+    width: 330px;
+    height: 330px;
+  }
+
+  #player {
+    font-size: 40px;
+  }
+
+  button {
+    font-size: 16px;
+    padding: 10px 14px;
+  }
+
+}
+
+</style>
 </head>
+
 
 <body>
 
-<h1>よけるゲーム</h1>
 
-<p id="score">スコア：0</p>
+<!-- =========================
+     タイトル画面
+========================= -->
 
-<div id="game">
+<div id="titleScreen" class="screen active">
 
-  <div id="player">😀</div>
+  <div class="titleMonster">
+    🐲
+  </div>
 
-  <div class="enemy">🔴</div>
-  <div class="enemy">🔴</div>
-  <div class="enemy">🔴</div>
+  <h2>
+    モンスター<br>
+    大ぼうけん
+  </h2>
+
+  <p>
+    モンスターをつかまえて<br>
+    いっしょにたたかおう！
+  </p>
+
+  <button onclick="startGame()">
+    ▶️ ゲームスタート
+  </button>
 
 </div>
 
-<div id="buttons">
-  <button id="leftButton">⬅️</button>
-  <button id="rightButton">➡️</button>
+
+<!-- =========================
+     ゲーム画面
+========================= -->
+
+<div id="gameScreen" class="screen">
+
+  <h1>
+    🌟 モンスター大ぼうけん 🌟
+  </h1>
+
+
+  <div id="info">
+
+    💰 コイン：
+    <span id="coins">100</span>
+
+   　
+
+    🧪 くすり：
+    <span id="potions">3</span>
+
+   　
+
+    ⭐ LV：
+    <span id="level">1</span>
+
+  </div>
+
+
+  <div id="message">
+    🌳 森へ行ってみよう！
+  </div>
+
+
+  <!-- マップ -->
+
+  <div id="map">
+
+    <div id="villageArea">
+
+      <div class="house">
+        🏠
+      </div>
+
+      <div class="shop">
+        🏪
+      </div>
+
+      <div class="villageName">
+        ぼうけんの村
+      </div>
+
+    </div>
+
+
+    <div id="forestArea">
+
+      <div class="tree tree1">
+        🌳
+      </div>
+
+      <div class="tree tree2">
+        🌳
+      </div>
+
+      <div class="tree tree3">
+        🌳
+      </div>
+
+      <div class="tree tree4">
+        🌳
+      </div>
+
+      <div class="flower1">
+        🌸
+      </div>
+
+      <div class="flower2">
+        🌼
+      </div>
+
+      <div class="forestName">
+        🌳 モンスターの森
+      </div>
+
+    </div>
+
+
+    <div id="castleArea">
+
+      <div class="castle">
+        🏰
+      </div>
+
+      <div class="castleName">
+        ボスじょう
+      </div>
+
+    </div>
+
+
+    <div id="player">
+      😀
+    </div>
+
+  </div>
+
+
+  <!-- 移動 -->
+
+  <div id="moveButtons">
+
+    <button
+      class="moveButton"
+      onclick="movePlayer(0,-30)">
+      ⬆️
+    </button>
+
+    <br>
+
+    <button
+      class="moveButton"
+      onclick="movePlayer(-30,0)">
+      ⬅️
+    </button>
+
+    <button
+      class="moveButton"
+      onclick="movePlayer(0,30)">
+      ⬇️
+    </button>
+
+    <button
+      class="moveButton"
+      onclick="movePlayer(30,0)">
+      ➡️
+    </button>
+
+  </div>
+
+
+  <!-- 場所移動 -->
+
+  <div>
+
+    <button onclick="goVillage()">
+      🏠 村
+    </button>
+
+    <button onclick="goForest()">
+      🌳 森
+    </button>
+
+    <button onclick="goCastle()">
+      🏰 城
+    </button>
+
+    <button onclick="openTeam()">
+      📖 チーム
+    </button>
+
+  </div>
+
+
+  <!-- 村メニュー -->
+
+  <div id="villageMenu" class="menuBox screen">
+
+    <h2>
+      🏠 ぼうけんの村
+    </h2>
+
+    <p>
+      ここではモンスターのHPを<br>
+      ぜんぶ回復できるよ！
+    </p>
+
+    <button onclick="heal()">
+      ❤️ ぜんぶ回復
+    </button>
+
+    <button onclick="openShop()">
+      🏪 お店
+    </button>
+
+  </div>
+
+
+  <!-- お店 -->
+
+  <div id="shopMenu" class="menuBox screen">
+
+    <h2>
+      🏪 モンスターショップ
+    </h2>
+
+    <p>
+      🧪 くすり　30コイン
+    </p>
+
+    <button onclick="buyPotion()">
+      🧪 くすりを買う
+    </button>
+
+    <button onclick="closeShop()">
+      ❌ とじる
+    </button>
+
+  </div>
+
+
+  <!-- チーム -->
+
+  <div id="teamMenu" class="menuBox screen">
+
+    <h2>
+      📖 モンスターチーム
+    </h2>
+
+    <p id="teamCount">
+      0ひき
+    </p>
+
+    <div id="teamList">
+    </div>
+
+    <p id="currentMonster">
+      モンスターがいないよ！
+    </p>
+
+  </div>
+
+
 </div>
 
-<script src="script.js"></script>
+
+<!-- =========================
+     バトル画面
+========================= -->
+
+<div id="battleScreen" class="screen">
+
+  <h1>
+    ⚔️ バトル！
+  </h1>
+
+
+  <!-- てき -->
+
+  <h2>
+    てき
+  </h2>
+
+  <div id="enemyMonster"
+       class="battleMonster">
+    👾
+  </div>
+
+  <div id="enemyName"
+       class="battleName">
+    モンスター
+  </div>
+
+  <p>
+    HP：
+    <span id="enemyHp">
+      100
+    </span>
+    /
+    <span id="enemyMaxHp">
+      100
+    </span>
+  </p>
+
+  <div class="hpBox">
+    <div id="enemyHpBar"
+         class="hpBar">
+    </div>
+  </div>
+
+
+  <hr>
+
+
+  <!-- 自分 -->
+
+  <h2>
+    じぶん
+  </h2>
+
+  <div id="myMonster"
+       class="battleMonster">
+    🐲
+  </div>
+
+  <div id="myMonsterName"
+       class="battleName">
+    ドラコ
+  </div>
+
+  <p>
+    HP：
+    <span id="myHp">
+      100
+    </span>
+    /
+    <span id="myMaxHp">
+      100
+    </span>
+  </p>
+
+  <div class="hpBox">
+    <div id="myHpBar"
+         class="hpBar">
+    </div>
+  </div>
+
+
+  <p>
+    ⭐ EXP：
+    <span id="exp">
+      0
+    </span>
+    /
+    <span id="nextExp">
+      100
+    </span>
+  </p>
+
+
+  <!-- バトルボタン -->
+
+  <button onclick="attack()">
+    ⚔️ こうげき
+  </button>
+
+  <button onclick="specialAttack()">
+    ✨ ひっさつ
+  </button>
+
+  <button onclick="usePotion()">
+    🧪 くすり
+  </button>
+
+  <button onclick="catchMonster()">
+    🎯 つかまえる
+  </button>
+
+  <button onclick="runAway()">
+    🏃 にげる
+  </button>
+
+</div>
+
+
+<!-- =========================
+     クリア画面
+========================= -->
+
+<div id="clearScreen" class="screen">
+
+  <h2>
+    🏆 ゲームクリア！
+  </h2>
+
+  <div class="titleMonster">
+    👑
+  </div>
+
+  <p>
+    キングドラゴンをたおした！
+  </p>
+
+  <p>
+    🎉 きみはさいこうの<br>
+    ぼうけんしゃだ！
+  </p>
+
+  <button onclick="location.reload()">
+    🔄 もういちど
+  </button>
+
+</div>
+
+
+<script>
+
+/* ==================================================
+   ゲームのデータ
+================================================== */
+
+
+/* プレイヤーの場所 */
+
+let playerX = 155;
+let playerY = 160;
+
+
+/* 今いる場所 */
+
+let currentPlace = "village";
+
+
+/* バトル中か */
+
+let battleMode = false;
+
+
+/* お金 */
+
+let coins = 100;
+
+
+/* くすり */
+
+let potions = 3;
+
+
+/* レベル */
+
+let level = 1;
+
+
+/* 経験値 */
+
+let exp = 0;
+
+
+/* 次のレベルまで */
+
+let nextExp = 100;
+
+
+/* 自分のモンスター */
+
+let myMonster = null;
+
+
+/* HP */
+
+let myHp = 100;
+
+
+/* 最大HP */
+
+let myMaxHp = 100;
+
+
+/* こうげき力 */
+
+let myAttack = 20;
+
+
+/* つかまえたモンスター */
+
+let team = [];
+
+
+/* てき */
+
+let enemy = null;
+
+
+/* ボスかどうか */
+
+let bossBattle = false;
+
+
+/* ==================================================
+   モンスター
+================================================== */
+
+const monsters = [
+
+  {
+    emoji: "🐲",
+    name: "ドラコ",
+    attack: 20
+  },
+
+  {
+    emoji: "🦊",
+    name: "コンコン",
+    attack: 18
+  },
+
+  {
+    emoji: "🐸",
+    name: "ケロリン",
+    attack: 16
+  },
+
+  {
+    emoji: "🐯",
+    name: "トラボー",
+    attack: 23
+  },
+
+  {
+    emoji: "🐰",
+    name: "ミミン",
+    attack: 15
+  },
+
+  {
+    emoji: "🐼",
+    name: "パンパン",
+    attack: 19
+  },
+
+  {
+    emoji: "🦁",
+    name: "ガオガオ",
+    attack: 25
+  },
+
+  {
+    emoji: "🐵",
+    name: "モンモン",
+    attack: 17
+  },
+
+  {
+    emoji: "👻",
+    name: "ユウレイ",
+    attack: 21
+  },
+
+  {
+    emoji: "👹",
+    name: "オニオニ",
+    attack: 24
+  }
+
+];
+
+
+/* ==================================================
+   画面を切りかえる
+================================================== */
+
+function showScreen(id) {
+
+  document
+    .querySelectorAll(".screen")
+    .forEach(function(screen) {
+
+      screen.classList.remove("active");
+
+    });
+
+
+  document
+    .getElementById(id)
+    .classList.add("active");
+
+}
+
+
+/* ==================================================
+   ゲームスタート
+================================================== */
+
+function startGame() {
+
+  showScreen("gameScreen");
+
+  updateInfo();
+
+  updatePlayer();
+
+  message(
+    "🌳 森へ行ってモンスターをさがそう！"
+  );
+
+}
+
+
+/* ==================================================
+   メッセージ
+================================================== */
+
+function message(text) {
+
+  document.getElementById(
+    "message"
+  ).textContent = text;
+
+}
+
+
+/* ==================================================
+   情報を更新
+================================================== */
+
+function updateInfo() {
+
+  document.getElementById(
+    "coins"
+  ).textContent = coins;
+
+  document.getElementById(
+    "potions"
+  ).textContent = potions;
+
+  document.getElementById(
+    "level"
+  ).textContent = level;
+
+}
+
+
+/* ==================================================
+   プレイヤーを動かす
+================================================== */
+
+function movePlayer(dx,dy) {
+
+  if(battleMode) {
+    return;
+  }
+
+
+  playerX += dx;
+  playerY += dy;
+
+
+  /* はみ出さないようにする */
+
+  if(playerX < 0) {
+    playerX = 0;
+  }
+
+  if(playerX > 315) {
+    playerX = 315;
+  }
+
+  if(playerY < 0) {
+    playerY = 0;
+  }
+
+  if(playerY > 310) {
+    playerY = 310;
+  }
+
+
+  updatePlayer();
+
+
+  /* 森ならバトルになる */
+
+  if(
+    currentPlace === "forest" &&
+    Math.random() < 0.25
+  ) {
+
+    startBattle();
+
+  }
+
+
+  /* 城ならボスが出る */
+
+  if(
+    currentPlace === "castle" &&
+    Math.random() < 0.20
+  ) {
+
+    startBossBattle();
+
+  }
+
+}
+
+
+/* ==================================================
+   プレイヤーの表示
+================================================== */
+
+function updatePlayer() {
+
+  const player =
+    document.getElementById("player");
+
+  player.style.left =
+    playerX + "px";
+
+  player.style.top =
+    playerY + "px";
+
+}
+
+
+/* ==================================================
+   村へ
+================================================== */
+
+function goVillage() {
+
+  if(battleMode) {
+    return;
+  }
+
+
+  currentPlace = "village";
+
+  playerX = 155;
+  playerY = 160;
+
+  updatePlayer();
+
+  hideMenus();
+
+  showOnlyMenu("villageMenu");
+
+  message(
+    "🏠 村についたよ！"
+  );
+
+}
+
+
+/* ==================================================
+   森へ
+================================================== */
+
+function goForest() {
+
+  if(battleMode) {
+    return;
+  }
+
+
+  currentPlace = "forest";
+
+  playerX = 155;
+  playerY = 200;
+
+  updatePlayer();
+
+  hideMenus();
+
+  message(
+    "🌳 森にきたよ！ モンスターをさがそう！"
+  );
+
+}
+
+
+/* ==================================================
+   城へ
+================================================== */
+
+function goCastle() {
+
+  if(battleMode) {
+    return;
+  }
+
+
+  currentPlace = "castle";
+
+  playerX = 155;
+  playerY = 280;
+
+  updatePlayer();
+
+  hideMenus();
+
+  message(
+    "🏰 ボスじょうだ！"
+  );
+
+}
+
+
+/* ==================================================
+   メニューを全部かくす
+================================================== */
+
+function hideMenus() {
+
+  document
+    .querySelectorAll(".menuBox")
+    .forEach(function(menu) {
+
+      menu.classList.remove("active");
+
+    });
+
+}
+
+
+/* ==================================================
+   1つだけメニューを出す
+================================================== */
+
+function showOnlyMenu(id) {
+
+  hideMenus();
+
+  document
+    .getElementById(id)
+    .classList.add("active");
+
+}
+
+
+/* ==================================================
+   家で回復
+================================================== */
+
+function heal() {
+
+  if(myMonster === null) {
+
+    message(
+      "😢 まだモンスターがいないよ！"
+    );
+
+    return;
+  }
+
+
+  myHp = myMaxHp;
+
+  updateBattleStatus();
+
+  message(
+    "❤️ HPがぜんぶ回復した！"
+  );
+
+}
+
+
+/* ==================================================
+   お店を開く
+================================================== */
+
+function openShop() {
+
+  showOnlyMenu("shopMenu");
+
+}
+
+
+/* ==================================================
+   お店を閉じる
+================================================== */
+
+function closeShop() {
+
+  hideMenus();
+
+}
+
+
+/* ==================================================
+   くすりを買う
+================================================== */
+
+function buyPotion() {
+
+  if(coins < 30) {
+
+    message(
+      "😢 コインがたりない！"
+    );
+
+    return;
+  }
+
+
+  coins -= 30;
+
+  potions += 1;
+
+  updateInfo();
+
+  message(
+    "🧪 くすりを1こ買った！"
+  );
+
+}
+
+
+/* ==================================================
+   チームを見る
+================================================== */
+
+function openTeam() {
+
+  showOnlyMenu("teamMenu");
+
+  updateTeam();
+
+}
+
+
+/* ==================================================
+   チームを表示
+================================================== */
+
+function updateTeam() {
+
+  document.getElementById(
+    "teamCount"
+  ).textContent =
+    team.length + "ひき";
+
+
+  const list =
+    document.getElementById("teamList");
+
+
+  list.innerHTML = "";
+
+
+  team.forEach(
+    function(monster,index) {
+
+      const button =
+        document.createElement("button");
+
+
+      button.className =
+        "teamMonster";
+
+
+      button.textContent =
+        monster.emoji;
+
+
+      button.title =
+        monster.name;
+
+
+      button.onclick =
+        function() {
+
+          changeMonster(index);
+
+        };
+
+
+      list.appendChild(button);
+
+    }
+  );
+
+
+  if(myMonster === null) {
+
+    document.getElementById(
+      "currentMonster"
+    ).textContent =
+      "モンスターがいないよ！";
+
+  }
+  else {
+
+    document.getElementById(
+      "currentMonster"
+    ).textContent =
+      "⭐ いまのモンスター：" +
+      myMonster.name;
+
+  }
+
+}
+
+
+/* ==================================================
+   モンスターを交代
+================================================== */
+
+function changeMonster(index) {
+
+  const monster =
+    team[index];
+
+
+  myMonster =
+    monster;
+
+
+  myMaxHp =
+    100 + (level - 1) * 20;
+
+
+  myHp =
+    myMaxHp;
+
+
+  myAttack =
+    monster.attack +
+    (level - 1) * 4;
+
+
+  updateTeam();
+
+  updateBattleStatus();
+
+
+  message(
+    "⭐ " +
+    monster.name +
+    "に交代した！"
+  );
+
+}
+
+
+/* ==================================================
+   ふつうのバトル
+================================================== */
+
+function startBattle() {
+
+  if(battleMode) {
+    return;
+  }
+
+
+  battleMode = true;
+
+  bossBattle = false;
+
+
+  /* 最初のモンスター */
+
+  if(myMonster === null) {
+
+    myMonster = monsters[0];
+
+    myMaxHp = 100;
+
+    myHp = 100;
+
+    myAttack = 20;
+
+    team.push(myMonster);
+
+  }
+
+
+  /* てきをランダムに決める */
+
+  enemy =
+    monsters[
+      Math.floor(
+        Math.random() *
+        monsters.length
+      )
+    ];
+
+
+  const enemyMax =
+    70 + level * 10;
+
+
+  enemy.maxHp = enemyMax;
+
+  enemy.hp = enemyMax;
+
+
+  showBattle();
+
+
+  message(
+    "😱 " +
+    enemy.name +
+    "があらわれた！"
+  );
+
+}
+
+
+/* ==================================================
+   ボスバトル
+================================================== */
+
+function startBossBattle() {
+
+  if(battleMode) {
+    return;
+  }
+
+
+  battleMode = true;
+
+  bossBattle = true;
+
+
+  if(myMonster === null) {
+
+    myMonster = monsters[0];
+
+    team.push(myMonster);
+
+  }
+
+
+  enemy = {
+
+    emoji: "👑🐉",
+
+    name: "キングドラゴン",
+
+    attack: 35,
+
+    maxHp: 300 + level * 30,
+
+    hp: 300 + level * 30
+
+  };
+
+
+  showBattle();
+
+
+  message(
+    "👑 キングドラゴンがあらわれた！！"
+  );
+
+}
+
+
+/* ==================================================
+   バトル画面
+================================================== */
+
+function showBattle() {
+
+  showScreen("battleScreen");
+
+
+  document.getElementById(
+    "enemyMonster"
+  ).textContent =
+    enemy.emoji;
+
+
+  document.getElementById(
+    "enemyName"
+  ).textContent =
+    enemy.name;
+
+
+  document.getElementById(
+    "myMonster"
+  ).textContent =
+    myMonster.emoji;
+
+
+  document.getElementById(
+    "myMonsterName"
+  ).textContent =
+    myMonster.name;
+
+
+  updateBattleStatus();
+
+}
+
+
+/* ==================================================
+   バトル情報
+================================================== */
+
+function updateBattleStatus() {
+
+  if(enemy !== null) {
+
+    document.getElementById(
+      "enemyHp"
+    ).textContent =
+      Math.max(0,enemy.hp);
+
+
+    document.getElementById(
+      "enemyMaxHp"
+    ).textContent =
+      enemy.maxHp;
+
+
+    const enemyPercent =
+      Math.max(
+        0,
+        enemy.hp / enemy.maxHp * 100
+      );
+
+
+    document.getElementById(
+      "enemyHpBar"
+    ).style.width =
+      enemyPercent + "%";
+
+  }
+
+
+  document.getElementById(
+    "myHp"
+  ).textContent =
+    Math.max(0,myHp);
+
+
+  document.getElementById(
+    "myMaxHp"
+  ).textContent =
+    myMaxHp;
+
+
+  const myPercent =
+    Math.max(
+      0,
+      myHp / myMaxHp * 100
+    );
+
+
+  document.getElementById(
+    "myHpBar"
+  ).style.width =
+    myPercent + "%";
+
+
+  document.getElementById(
+    "exp"
+  ).textContent =
+    exp;
+
+
+  document.getElementById(
+    "nextExp"
+  ).textContent =
+    nextExp;
+
+
+  updateInfo();
+
+}
+
+
+/* ==================================================
+   こうげき
+================================================== */
+
+function attack() {
+
+  if(!battleMode) {
+    return;
+  }
+
+
+  const damage =
+    Math.floor(
+      Math.random() * myAttack
+    ) + 5;
+
+
+  enemy.hp -= damage;
+
+
+  if(enemy.hp < 0) {
+    enemy.hp = 0;
+  }
+
+
+  updateBattleStatus();
+
+
+  message(
+    "⚔️ " +
+    damage +
+    "ダメージ！"
+  );
+
+
+  if(enemy.hp <= 0) {
+
+    winBattle();
+
+    return;
+  }
+
+
+  setTimeout(
+    enemyAttack,
+    500
+  );
+
+}
+
+
+/* ==================================================
+   必殺技
+================================================== */
+
+function specialAttack() {
+
+  if(!battleMode) {
+    return;
+  }
+
+
+  const damage =
+    Math.floor(
+      Math.random() * 50
+    ) + 25;
+
+
+  enemy.hp -= damage;
+
+
+  if(enemy.hp < 0) {
+    enemy.hp = 0;
+  }
+
+
+  updateBattleStatus();
+
+
+  message(
+    "✨ ひっさつ！！ " +
+    damage +
+    "ダメージ！！"
+  );
+
+
+  if(enemy.hp <= 0) {
+
+    winBattle();
+
+    return;
+  }
+
+
+  setTimeout(
+    enemyAttack,
+    500
+  );
+
+}
+
+
+/* ==================================================
+   てきの攻撃
+================================================== */
+
+function enemyAttack() {
+
+  if(!battleMode) {
+    return;
+  }
+
+
+  const damage =
+    Math.floor(
+      Math.random() * enemy.attack
+    ) + 5;
+
+
+  myHp -= damage;
+
+
+  if(myHp < 0) {
+    myHp = 0;
+  }
+
+
+  updateBattleStatus();
+
+
+  message(
+    "💥 " +
+    enemy.name +
+    "のこうげき！ " +
+    damage +
+    "ダメージ！"
+  );
+
+
+  if(myHp <= 0) {
+
+    loseBattle();
+
+  }
+
+}
+
+
+/* ==================================================
+   くすりを使う
+================================================== */
+
+function usePotion() {
+
+  if(!battleMode) {
+    return;
+  }
+
+
+  if(potions <= 0) {
+
+    message(
+      "😢 くすりがない！"
+    );
+
+    return;
+  }
+
+
+  potions--;
+
+
+  myHp += 40;
+
+
+  if(myHp > myMaxHp) {
+    myHp = myMaxHp;
+  }
+
+
+  updateBattleStatus();
+
+
+  message(
+    "🧪 HPが40回復した！"
+  );
+
+
+  setTimeout(
+    enemyAttack,
+    500
+  );
+
+}
+
+
+/* ==================================================
+   モンスターをつかまえる
+================================================== */
+
+function catchMonster() {
+
+  if(!battleMode) {
+    return;
+  }
+
+
+  /* ボスはつかまえられない */
+
+  if(bossBattle) {
+
+    message(
+      "👑 キングドラゴンはつかまえられない！"
+    );
+
+    setTimeout(
+      enemyAttack,
+      500
+    );
+
+    return;
+  }
+
+
+  let chance = 0.30;
+
+
+  /* HPがへっているとつかまえやすい */
+
+  if(
+    enemy.hp <=
+    enemy.maxHp * 0.5
+  ) {
+
+    chance = 0.60;
+
+  }
+
+
+  if(
+    enemy.hp <=
+    enemy.maxHp * 0.2
+  ) {
+
+    chance = 0.90;
+
+  }
+
+
+  if(Math.random() < chance) {
+
+    /* コピーを作る */
+
+    const caught = {
+
+      emoji: enemy.emoji,
+
+      name: enemy.name,
+
+      attack: enemy.attack
+
+    };
+
+
+    team.push(caught);
+
+
+    /* はじめてなら使う */
+
+    if(myMonster === null) {
+
+      myMonster = caught;
+
+    }
+
+
+    myMonster = caught;
+
+
+    myMaxHp =
+      100 + (level - 1) * 20;
+
+
+    myHp =
+      myMaxHp;
+
+
+    myAttack =
+      caught.attack +
+      (level - 1) * 4;
+
+
+    updateTeam();
+
+    updateBattleStatus();
+
+
+    message(
+      "🎉 " +
+      caught.name +
+      "をつかまえた！！"
+    );
+
+
+    endBattle();
+
+  }
+  else {
+
+    message(
+      "😱 つかまらなかった！"
+    );
+
+
+    setTimeout(
+      enemyAttack,
+      500
+    );
+
+  }
+
+}
+
+
+/* ==================================================
+   にげる
+================================================== */
+
+function runAway() {
+
+  if(!battleMode) {
+    return;
+  }
+
+
+  if(bossBattle) {
+
+    message(
+      "👑 ボスからはにげられない！"
+    );
+
+
+    setTimeout(
+      enemyAttack,
+      500
+    );
+
+
+    return;
+  }
+
+
+  if(Math.random() < 0.75) {
+
+    message(
+      "🏃 にげた！"
+    );
+
+
+    endBattle();
+
+  }
+  else {
+
+    message(
+      "😱 にげられない！"
+    );
+
+
+    setTimeout(
+      enemyAttack,
+      500
+    );
+
+  }
+
+}
+
+
+/* ==================================================
+   バトル勝利
+================================================== */
+
+function winBattle() {
+
+  if(bossBattle) {
+
+    battleMode = false;
+
+
+    showScreen("clearScreen");
+
+
+    return;
+  }
+
+
+  const getCoins =
+    Math.floor(
+      Math.random() * 25
+    ) + 10;
+
+
+  const getExp = 40;
+
+
+  coins += getCoins;
+
+  exp += getExp;
+
+
+  message(
+    "🎉 かった！ +" +
+    getCoins +
+    "コイン！ +" +
+    getExp +
+    "EXP！"
+  );
+
+
+  checkLevelUp();
+
+
+  updateInfo();
+
+
+  setTimeout(
+    function() {
+
+      endBattle();
+
+    },
+    1000
+  );
+
+}
+
+
+/* ==================================================
+   レベルアップ
+================================================== */
+
+function checkLevelUp() {
+
+  while(exp >= nextExp) {
+
+    exp -= nextExp;
+
+    level++;
+
+
+    nextExp =
+      Math.floor(
+        nextExp * 1.3
+      );
+
+
+    myMaxHp =
+      100 + (level - 1) * 20;
+
+
+    myHp =
+      myMaxHp;
+
+
+    if(myMonster !== null) {
+
+      myAttack =
+        myMonster.attack +
+        (level - 1) * 4;
+
+    }
+
+
+    message(
+      "🌟 レベルアップ！！ LV " +
+      level +
+      "になった！"
+    );
+
+  }
+
+
+  updateBattleStatus();
+
+}
+
+
+/* ==================================================
+   バトル終了
+================================================== */
+
+function endBattle() {
+
+  battleMode = false;
+
+
+  setTimeout(
+    function() {
+
+      showScreen("gameScreen");
+
+      updatePlayer();
+
+      updateInfo();
+
+      updateTeam();
+
+    },
+    700
+  );
+
+}
+
+
+/* ==================================================
+   負けた
+================================================== */
+
+function loseBattle() {
+
+  battleMode = false;
+
+
+  coins =
+    Math.floor(coins / 2);
+
+
+  myHp =
+    myMaxHp;
+
+
+  message(
+    "💀 まけちゃった……村にもどったよ！"
+  );
+
+
+  setTimeout(
+    function() {
+
+      currentPlace = "village";
+
+      playerX = 155;
+      playerY = 160;
+
+
+      showScreen("gameScreen");
+
+      updatePlayer();
+
+      updateInfo();
+
+    },
+    1200
+  );
+
+}
+
+
+/* ==================================================
+   キーボードでも動く
+================================================== */
+
+document.addEventListener(
+  "keydown",
+  function(event) {
+
+    if(battleMode) {
+      return;
+    }
+
+
+    if(event.key === "ArrowUp") {
+
+      movePlayer(0,-30);
+
+    }
+
+
+    if(event.key === "ArrowDown") {
+
+      movePlayer(0,30);
+
+    }
+
+
+    if(event.key === "ArrowLeft") {
+
+      movePlayer(-30,0);
+
+    }
+
+
+    if(event.key === "ArrowRight") {
+
+      movePlayer(30,0);
+
+    }
+
+  }
+);
+
+
+/* ==================================================
+   はじめの設定
+================================================== */
+
+updateInfo();
+
+updatePlayer();
+
+</script>
 
 </body>
 </html>
