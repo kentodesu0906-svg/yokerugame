@@ -1,0 +1,366 @@
+```javascript
+function clearStage() {
+
+    if (gamePaused) return;
+
+    gamePaused = true;
+
+    score += stage * 100;
+
+    scoreText.textContent = score;
+
+    localStorage.setItem(
+        "athleticScore",
+        score
+    );
+
+    /* 10000ステージ完全クリア */
+
+    if (stage >= 10000) {
+
+        messageTitle.textContent =
+            "🏆🎉 10000 STAGE CLEAR!! 🎉🏆";
+
+        messageText.innerHTML =
+            "🌟 完全クリアおめでとう！🌟<br><br>" +
+            "⭐ 最終スコア：" +
+            score +
+            "<br>" +
+            "🪙 コイン：" +
+            totalCoins +
+            "<br><br>" +
+            "🎵 クリアソングをどうぞ！";
+
+        nextButton.textContent =
+            "🎵 もう一度聴く";
+
+        message.style.display =
+            "block";
+
+        startFinalCelebration();
+
+    } else {
+
+        messageTitle.textContent =
+            "🎉 ステージクリア！";
+
+        messageText.textContent =
+            "ステージ " +
+            stage +
+            " クリア！";
+
+        nextButton.textContent =
+            "次のステージ ▶";
+
+        message.style.display =
+            "block";
+    }
+}
+
+
+/* =====================================
+   最終クリア演出
+===================================== */
+
+function startFinalCelebration() {
+
+    /* 歌を再生 */
+
+    let music =
+        document.getElementById(
+            "clearMusic"
+        );
+
+    if (!music) {
+
+        music =
+            document.createElement(
+                "audio"
+            );
+
+        music.id =
+            "clearMusic";
+
+        music.src =
+            "clear.mp3";
+
+        music.loop =
+            true;
+
+        document.body.appendChild(
+            music
+        );
+    }
+
+    music.currentTime = 0;
+
+    music.play().catch(
+        function() {
+            showToast(
+                "🎵 ボタンを押すと歌が流れます！"
+            );
+        }
+    );
+
+
+    /* 花火 */
+
+    createFireworks();
+
+}
+
+
+/* =====================================
+   花火
+===================================== */
+
+function createFireworks() {
+
+    const canvas =
+        document.createElement(
+            "canvas"
+        );
+
+    canvas.style.position =
+        "fixed";
+
+    canvas.style.left =
+        "0";
+
+    canvas.style.top =
+        "0";
+
+    canvas.style.width =
+        "100%";
+
+    canvas.style.height =
+        "100%";
+
+    canvas.style.pointerEvents =
+        "none";
+
+    canvas.style.zIndex =
+        "1900";
+
+    canvas.width =
+        window.innerWidth;
+
+    canvas.height =
+        window.innerHeight;
+
+    document.body.appendChild(
+        canvas
+    );
+
+
+    const ctx =
+        canvas.getContext(
+            "2d"
+        );
+
+
+    const particles = [];
+
+
+    function firework() {
+
+        const centerX =
+            Math.random() *
+            canvas.width;
+
+        const centerY =
+            100 +
+            Math.random() *
+            canvas.height *
+            0.55;
+
+
+        for (
+            let i = 0;
+            i < 60;
+            i++
+        ) {
+
+            const angle =
+                Math.random() *
+                Math.PI *
+                2;
+
+            const speed =
+                2 +
+                Math.random() *
+                6;
+
+
+            particles.push({
+
+                x: centerX,
+
+                y: centerY,
+
+                vx:
+                    Math.cos(angle) *
+                    speed,
+
+                vy:
+                    Math.sin(angle) *
+                    speed,
+
+                life: 80
+
+            });
+
+        }
+
+    }
+
+
+    let lastFirework = 0;
+
+
+    function animate(time) {
+
+        ctx.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+
+        if (
+            time -
+            lastFirework >
+            500
+        ) {
+
+            firework();
+
+            lastFirework =
+                time;
+
+        }
+
+
+        for (
+            let i =
+                particles.length - 1;
+            i >= 0;
+            i--
+        ) {
+
+            const p =
+                particles[i];
+
+
+            p.x += p.vx;
+
+            p.y += p.vy;
+
+            p.vy += 0.08;
+
+            p.life--;
+
+
+            ctx.globalAlpha =
+                Math.max(
+                    0,
+                    p.life / 80
+                );
+
+
+            ctx.beginPath();
+
+            ctx.arc(
+                p.x,
+                p.y,
+                4,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fill();
+
+
+            if (
+                p.life <= 0
+            ) {
+
+                particles.splice(
+                    i,
+                    1
+                );
+
+            }
+
+        }
+
+
+        ctx.globalAlpha = 1;
+
+
+        requestAnimationFrame(
+            animate
+        );
+
+    }
+
+
+    requestAnimationFrame(
+        animate
+    );
+
+}
+
+
+/* =====================================
+   「もう一度聴く」ボタン
+===================================== */
+
+nextButton.addEventListener(
+    "click",
+    function() {
+
+        if (
+            stage >= 10000
+        ) {
+
+            const music =
+                document.getElementById(
+                    "clearMusic"
+                );
+
+            if (music) {
+
+                music.currentTime =
+                    0;
+
+                music.play();
+
+            }
+
+            return;
+        }
+
+
+        stage++;
+
+
+        localStorage.setItem(
+            "athleticStage",
+            stage
+        );
+
+
+        message.style.display =
+            "none";
+
+        gamePaused =
+            false;
+
+
+        createStage();
+
+    }
+);
+```

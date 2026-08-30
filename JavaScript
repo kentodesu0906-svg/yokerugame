@@ -1,0 +1,6 @@
+localStorage.removeItem("athleticStage");
+localStorage.removeItem("athleticScore");
+localStorage.removeItem("athleticCoins");
+localStorage.removeItem("athleticDeaths");
+
+location.reload();
